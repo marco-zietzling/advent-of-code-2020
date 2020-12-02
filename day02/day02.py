@@ -34,4 +34,5 @@ with open("input.txt") as file:
 # result = 550
 print(f"part 1: result={part1_counter}")
 
+# result = 634
 print(f"part 2: result={part2_counter}")
