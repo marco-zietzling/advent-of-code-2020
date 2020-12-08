@@ -2,49 +2,68 @@ print("advent of code 2020 - day 8")
 
 
 def read_program():
-    instructions = []
+    _instructions = []
 
     with open("input.txt") as file:
         for line in file:
-            (operation, argument) = line.strip().split(" ")
-            instructions.append((operation, int(argument)))
+            (_operation, _argument) = line.strip().split(" ")
+            _instructions.append((_operation, int(_argument)))
 
-    return instructions
+    return _instructions
 
 
-def run_program_until_inflp(instructions: list[(str, int)]):
-    accumulator = 0
-    index = 0
-    indices_visited = set()
-    infinite_loop_encountered = False
+def run_program_until_infloop(_instructions: list[(str, int)]):
+    _accumulator = 0
+    _index = 0
+    _indices_visited = set()
+    _infinite_loop_encountered = False
 
     while True:
-        indices_visited.add(index)
-        (operation, argument) = instructions[index]
-        # print(f"current instruction: {operation} {argument}")
+        _indices_visited.add(_index)
+        (_operation, _argument) = _instructions[_index]
+        # print(f"current instruction: {_operation} {_argument}")
 
-        if operation == "nop":
-            index += 1
-        elif operation == "acc":
-            accumulator += argument
-            # print(f"current value of accumulator = {accumulator}")
-            index += 1
-        elif operation == "jmp":
-            index += argument
+        if _operation == "nop":
+            _index += 1
+        elif _operation == "acc":
+            _accumulator += _argument
+            _index += 1
+        elif _operation == "jmp":
+            _index += _argument
         else:
-            raise Exception(f"unknown operation encountered: {operation}")
+            raise Exception(f"unknown _operation encountered: {_operation}")
 
-        if index in indices_visited:
-            infinite_loop_encountered = True
+        if _index in _indices_visited:
+            _infinite_loop_encountered = True
             break
-        elif index >= len(instructions):
+        elif _index >= len(_instructions):
             break
 
-    return infinite_loop_encountered, accumulator
+    return _infinite_loop_encountered, _accumulator
 
 
 instructions = read_program()
-infinite_loop, accumulator = run_program_until_inflp(instructions)
+infinite_loop, accumulator = run_program_until_infloop(instructions)
 
 # result = 2034
 print(f"part 1: value of accumulator before infinite loop = {accumulator}")
+
+current_index_to_modify = 0
+while True:
+
+    instructions = read_program()
+    (operation, argument) = instructions[current_index_to_modify]
+
+    if operation == "nop":
+        instructions[current_index_to_modify] = ("jmp", argument)
+    elif operation == "jmp":
+        instructions[current_index_to_modify] = ("nop", argument)
+
+    infinite_loop, accumulator = run_program_until_infloop(instructions)
+    current_index_to_modify += 1
+
+    if not infinite_loop:
+        break
+
+# result = 672
+print(f"part 2: value of accumulator without infinite loop = {accumulator}")
